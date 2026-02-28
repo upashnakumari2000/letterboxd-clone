@@ -1,0 +1,6 @@
+# Secret keys / local env
+.env
+.dev.vars
+
+# Node
+node_modules/
