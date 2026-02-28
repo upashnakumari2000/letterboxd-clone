@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="api-base" content="/api/v1" />
+  <meta name="supabase-url" content="" />
+  <meta name="supabase-anon-key" content="" />
+  <title>Letterboxd Clone</title>
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+</head>
+
+<body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <h1 class="logo"><a href="#/">Letterboxd Clone</a></h1>
+      <nav aria-label="Primary navigation">
+        <ul class="nav-list" id="primary-nav"></ul>
+      </nav>
+    </div>
+  </header>
+  <main id="main-content" tabindex="-1"></main>
+  <footer class="site-footer">
+    <small>@ 2026 Upashna Kumari</small>
+  </footer>
+  <script>
+    window.__API_BASE__ = window.__API_BASE__ || document.querySelector('meta[name="api-base"]')?.content;
+    window.SUPABASE_URL = window.SUPABASE_URL || document.querySelector('meta[name="supabase-url"]')?.content;
+    window.SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || document.querySelector('meta[name="supabase-anon-key"]')?.content;
+  </script>
+  <script src="js/app/main.js" type="module"></script>
+</body>
+
+</html>

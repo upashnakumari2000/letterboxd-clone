@@ -1,0 +1,14 @@
+{
+  "name": "letterboxd-clone",
+  "private": true,
+  "version": "0.2.0",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace frontend",
+    "start": "npm run start --workspace frontend",
+    "build": "npm run build --workspace frontend",
+    "pages:dev": "npx wrangler pages dev frontend --compatibility-date=2026-01-01"
+  }
+}

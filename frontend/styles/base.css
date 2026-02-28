@@ -1,0 +1,116 @@
+/* ─── Design tokens ─────────────────────────────────────────────────────── */
+:root {
+  --bg: #14181c;
+  --bg-elev-1: #1b222b;
+  --bg-elev-2: #222c37;
+  --panel: #1f262d;
+  --panel-2: #26303a;
+  --text: #e8edf2;
+  --muted: #9fb0c1;
+  --accent: #00e054;
+  --border-soft: #3a4654;
+  --shadow-1: 0 10px 22px -18px rgba(5, 10, 18, 0.92);
+  --shadow-2: 0 18px 34px -22px rgba(3, 8, 15, 0.88);
+  --accent-glow: 0 0 0 1px rgba(0, 224, 84, 0.18), 0 0 18px -12px rgba(0, 224, 84, 0.5);
+  --danger: #ff6b6b;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 22px;
+  --space-6: 30px;
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --transition-interactive: background-color .2s ease, transform .2s ease, box-shadow .2s ease, border-color .2s ease, color .2s ease;
+  --transition-press: transform .12s ease, filter .12s ease;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────────────────── */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background:
+    radial-gradient(130% 110% at 0% 0%, #202934 0%, transparent 46%),
+    radial-gradient(110% 100% at 100% 0%, #1a2330 0%, transparent 42%),
+    linear-gradient(160deg, #13171c 0%, #11161d 45%, #0f1419 100%);
+  color: var(--text);
+  line-height: 1.45;
+  background-attachment: fixed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--text) 86%, var(--muted) 14%);
+}
+
+/* ─── Accessibility ──────────────────────────────────────────────────────── */
+.skip-link {
+  position: absolute;
+  left: -1000px;
+  top: 0;
+  background: #fff;
+  color: #000;
+  padding: 8px;
+}
+
+.skip-link:focus {
+  left: 8px;
+  z-index: 1000;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .nav-list a,
+  .nav-list button,
+  button.primary,
+  button.secondary,
+  button.danger,
+  .film-card,
+  .inline-link {
+    transition-duration: 0.01ms;
+    transition-delay: 0ms;
+  }
+
+  .nav-list a:hover,
+  .nav-list button:hover,
+  button.primary:hover,
+  button.secondary:hover,
+  button.danger:hover,
+  .film-card:hover,
+  .nav-list a:active,
+  .nav-list button:active,
+  button.primary:active,
+  button.secondary:active,
+  button.danger:active,
+  .film-card:active,
+  .inline-link:active {
+    transform: none;
+  }
+}

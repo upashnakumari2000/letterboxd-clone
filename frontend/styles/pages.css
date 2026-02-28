@@ -1,0 +1,230 @@
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
+.page-title {
+  margin: 0 0 var(--space-4);
+  font-size: clamp(1.55rem, 2.5vw, 2rem);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.hero {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--bg-elev-1) 84%, #293443 16%), color-mix(in srgb, var(--bg) 78%, #0e1217 22%));
+  border: 1px solid color-mix(in srgb, var(--border-soft) 82%, #4a5b6f 18%);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-1);
+}
+
+.hero-content {
+  display: grid;
+  gap: 10px;
+}
+
+.hero-title {
+  margin-bottom: 0;
+}
+
+.hero-subtitle {
+  margin: 0;
+  max-width: 72ch;
+}
+
+/* ─── Film detail page ───────────────────────────────────────────────────── */
+.film-layout {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.film-detail-poster {
+  width: min(100%, 260px);
+  min-height: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--border-soft) 80%, #5c6b7d 20%);
+  box-shadow: var(--shadow-2);
+  display: flex;
+}
+
+.film-detail-poster .poster-image,
+.film-detail-poster .poster {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.film-meta {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.film-page-hero {
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+}
+
+.film-meta-rich {
+  align-content: start;
+  background: color-mix(in srgb, var(--bg-elev-1) 72%, transparent 28%);
+  border: 1px solid color-mix(in srgb, var(--border-soft) 84%, #5c6b7d 16%);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  backdrop-filter: blur(2px);
+}
+
+.film-kicker {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: var(--text-xs);
+  color: #c0cedb;
+}
+
+.film-title {
+  margin-bottom: 0;
+}
+
+.film-stat-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.film-overview {
+  margin: 0;
+  max-width: 70ch;
+}
+
+.film-actions {
+  margin-top: var(--space-2);
+}
+
+.film-director-line {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.person-link {
+  color: #dce9f6;
+  border-bottom: 1px dotted color-mix(in srgb, #dce9f6 45%, transparent 55%);
+  transition: var(--transition-interactive), var(--transition-press);
+}
+
+.person-link:hover {
+  color: #ffffff;
+  border-bottom-color: color-mix(in srgb, #ffffff 70%, transparent 30%);
+}
+
+.film-info-grid {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+/* ─── Cast / crew ────────────────────────────────────────────────────────── */
+.cast-crew-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.compact-info-card {
+  margin-top: 0;
+  padding: var(--space-3);
+  gap: var(--space-3);
+}
+
+.compact-detail-list {
+  gap: var(--space-2);
+}
+
+.compact-detail-row {
+  padding: 6px 10px;
+  font-size: var(--text-sm);
+}
+
+/* ─── Where to watch ─────────────────────────────────────────────────────── */
+.where-to-watch-content {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.where-to-watch-chips {
+  row-gap: 10px;
+}
+
+.where-to-watch-link {
+  margin: 0;
+}
+
+/* ─── Discover / search ──────────────────────────────────────────────────── */
+.discover-search-card {
+  margin-bottom: var(--space-5);
+}
+
+/* ─── Profile ────────────────────────────────────────────────────────────── */
+.two-col {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.timeline-item h3 {
+  margin: var(--space-1) 0 var(--space-2);
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .film-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .poster {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .film-detail-poster {
+    justify-self: center;
+    min-height: auto;
+  }
+
+  .film-detail-poster .poster-image,
+  .film-detail-poster .poster {
+    height: auto;
+    aspect-ratio: 2/3;
+  }
+
+  .hero {
+    padding: 14px;
+  }
+
+  .hero-content {
+    gap: 8px;
+  }
+
+  .hero-subtitle {
+    max-width: none;
+  }
+
+  .toolbar-form {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .toolbar-form label {
+    flex: 1 1 100%;
+  }
+
+  .toolbar-form button {
+    width: 100%;
+  }
+
+  .cast-crew-layout {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@letterboxd-clone/frontend",
+  "private": true,
+  "version": "0.1.0",
+  "buildNote": "Intentionally no-op: the frontend is plain static files (HTML/CSS/JS) served directly from this folder.",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "node -e \"console.log('Intentionally no-op: static frontend is served directly from frontend/')\""
+  }
+}
