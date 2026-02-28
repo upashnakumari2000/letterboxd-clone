@@ -16,11 +16,19 @@ export function renderNav(nav) {
     return `<a href="${href}"${activeClass}${activeAttr}>${label}</a>`;
   };
 
-  const authLinks = state.currentUser
-    ? `<li>${navLink(`#/profile/${encodeURIComponent(state.currentUser.username)}`, 'Profile')}</li>
-       <li>${navLink('#/watchlist', 'Watchlist')}</li>
-       <li><button type="button" data-action="signout">Sign out</button></li>`
-    : `<li>${navLink('#/signin', 'Sign in')}</li><li>${navLink('#/signup', 'Sign up')}</li>`;
+  const watchlistCount = state.watchlist.length;
+  const watchlistLabel = watchlistCount > 0 ? `Watchlist <span class="nav-badge">${watchlistCount}</span>` : 'Watchlist';
 
-  nav.innerHTML = `<li>${navLink('#/', 'Home')}</li><li>${navLink('#/films', 'Films')}</li>${authLinks}`;
+  const authLinks = state.currentUser
+    ? `<li>${navLink(`#/profile/${encodeURIComponent(state.currentUser.username)}`, `@${escapeHtml(state.currentUser.username)}`)}</li>
+       <li>${navLink('#/watchlist', watchlistLabel)}</li>
+       <li><button type="button" data-action="signout">Sign out</button></li>`
+    : `<li><button type="button" data-action="open-signin">Sign in</button></li>
+       <li><button type="button" data-action="open-signup" class="nav-signup-btn">Sign up</button></li>`;
+
+  nav.innerHTML = `
+    <li>${navLink('#/', 'Home')}</li>
+    <li>${navLink('#/films', 'Films')}</li>
+    ${authLinks}
+  `;
 }

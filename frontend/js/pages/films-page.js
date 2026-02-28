@@ -5,6 +5,7 @@ import { state, getFilm, navigate } from '../app/state.js';
 import { filmGrid } from '../components/movie-card.js';
 import { escapeHtml } from '../utils/dom.js';
 import { formatWatchedOn } from '../utils/format.js';
+import { bindLiveSearch } from '../components/live-search.js';
 
 function heroSection(title, subtitle, extraContent = '') {
   return `<section class="hero">
@@ -21,7 +22,18 @@ export async function homePage(app) {
   try {
     const payload = await apiFetch('/movies/trending');
     state.tmdbFilms = (payload.results || []).map((m) => normalizeTmdbFilm(m));
-    app.innerHTML = `${heroSection('Trending this week', 'A quick pulse check on what Letterboxd-style viewers are talking about right now.')}${filmGrid(state.tmdbFilms)}`;
+    app.innerHTML = `
+      ${heroSection('Trending this week', 'A quick pulse check on what Letterboxd-style viewers are talking about right now.')}
+      <section class="card section discover-search-card">
+        <form id="discover-form" class="toolbar-form" autocomplete="off">
+          <label style="flex:1">
+            <input id="nav-search-input" name="q" placeholder="Search films, directors, actors…" autocomplete="off" />
+          </label>
+          <button class="primary" type="submit">Search</button>
+        </form>
+      </section>
+      ${filmGrid(state.tmdbFilms)}`;
+    bindLiveSearch(document.getElementById('nav-search-input'));
   } catch (err) {
     app.innerHTML = `<section class="card"><h2>Unable to load TMDB data</h2><p class="muted">${escapeHtml(err.message)}</p></section>`;
   }
@@ -30,31 +42,27 @@ export async function homePage(app) {
 export async function filmsPage(app, query = '') {
   const search = decodeURIComponent(query || '').trim();
   app.innerHTML = `${heroSection('Discover films', 'Search by title, actor, or director, or browse current standouts.')}
-    <section class="card section">
-      <form id="discover-form" class="toolbar-form">
-        <label>Search TMDB
-          <input name="q" placeholder="e.g. Arrival, Denis Villeneuve, Amy Adams" value="${escapeHtml(search)}" />
+    <section class="card section discover-search-card">
+      <form id="discover-form" class="toolbar-form" autocomplete="off">
+        <label style="flex:1">
+          <input id="nav-search-input" name="q" placeholder="Search films, directors, actors…" value="${escapeHtml(search)}" autocomplete="off" />
         </label>
         <button class="primary" type="submit">Search</button>
       </form>
     </section>
     <p class="muted">Loading…</p>`;
 
+  bindLiveSearch(document.getElementById('nav-search-input'));
+
   try {
     const payload = search
       ? await apiFetch(`/movies/search?q=${encodeURIComponent(search)}`)
       : await apiFetch('/movies/trending');
     state.tmdbFilms = (payload.results || []).map((m) => normalizeTmdbFilm(m));
-    app.innerHTML = `${heroSection('Discover films', 'Search by title, actor, or director, or browse current standouts.')}
-      <section class="card section discover-search-card">
-        <form id="discover-form" class="toolbar-form">
-          <label>Search TMDB
-            <input name="q" placeholder="e.g. Arrival, Denis Villeneuve, Amy Adams" value="${escapeHtml(search)}" />
-          </label>
-          <button class="primary" type="submit">Search</button>
-        </form>
-      </section>
-      ${filmGrid(state.tmdbFilms)}`;
+    const searchCard = app.querySelector('.discover-search-card');
+    const loadingMsg = app.querySelector('.muted');
+    if (loadingMsg) loadingMsg.remove();
+    app.insertAdjacentHTML('beforeend', filmGrid(state.tmdbFilms));
   } catch (err) {
     app.innerHTML = `<section class="card"><h2>Search failed</h2><p class="muted">${escapeHtml(err.message)}</p></section>`;
   }
@@ -93,15 +101,12 @@ export async function profilePage(app, username) {
     <h3>Recent reviews</h3>
     ${
       profileReviews.length
-        ? `<div class="feed">${profileReviews
-            .map(
-              (review) => `<article class="review-card timeline-item">
-      <p class="muted">⭐ ${escapeHtml(Number(review.rating).toFixed(1))} • <a class="inline-link" href="#/film/${encodeURIComponent(review.movieId)}">Film ${escapeHtml(review.movieId)}</a></p>
-      <p>${escapeHtml(review.text)}</p>
-      <p class="muted">${formatWatchedOn(review.watchedOn)}</p>
-    </article>`,
-            )
-            .join('')}</div>`
+        ? `<div class="feed">${profileReviews.map((review) => `
+      <article class="review-card timeline-item">
+        <p class="muted">⭐ ${escapeHtml(Number(review.rating).toFixed(1))} • <a class="inline-link" href="#/film/${encodeURIComponent(review.movieId)}">Film ${escapeHtml(review.movieId)}</a></p>
+        <p>${escapeHtml(review.text)}</p>
+        <p class="muted">${formatWatchedOn(review.watchedOn)}</p>
+      </article>`).join('')}</div>`
         : '<p class="muted empty-state">No reviews yet.</p>'
     }
   </section>`;

@@ -5,6 +5,9 @@ import { createMovieReview, deleteMovieReview, updateMovieReview } from './revie
 import { validateReviewPayload } from '../utils/validation.js';
 import { parseRoute } from '../app/router.js';
 import { renderNav } from '../components/navbar.js';
+import { openAuthModal, handleAuthSubmit } from '../pages/auth-page.js';
+import { closeModal } from '../components/modal.js';
+import { hideDropdown } from '../components/live-search.js';
 
 function mapSupabaseError(error, fallback = 'Request failed') {
   if (!error) return fallback;
@@ -78,7 +81,7 @@ function setReviewMessage(message, isError = false) {
   const node = document.getElementById('review-message');
   if (!node) return;
   node.textContent = message;
-  node.style.color = isError ? 'var(--danger)' : 'var(--muted)';
+  node.style.color = isError ? 'var(--danger)' : 'var(--accent)';
 }
 
 function syncReviewStarRating(container, nextRating) {
@@ -101,10 +104,32 @@ export function bindEvents(app, nav) {
     const t = e.target;
     if (!(t instanceof HTMLElement)) return;
 
+    // auth modal triggers from navbar
+    if (t.dataset.action === 'open-signin') {
+      openAuthModal('signin', nav);
+      return;
+    }
+    if (t.dataset.action === 'open-signup') {
+      openAuthModal('signup', nav);
+      return;
+    }
+
+    // auth switch inside modal (signin ↔ signup)
+    if (t.dataset.authSwitch) {
+      const mc = document.querySelector('.modal-content');
+      if (mc) {
+        const { authFormHtml } = await import('../pages/auth-page.js');
+        // re-render modal with switched type — handled inside auth-page openAuthModal
+        openAuthModal(t.dataset.authSwitch, nav);
+      }
+      return;
+    }
+
     if (t.dataset.action === 'toggle-watchlist') {
       const filmId = String(t.dataset.film || '').trim();
       if (!filmId) return;
       try { await toggleWatchlist(filmId); } catch { }
+      renderNav(nav);
       parseRoute(app);
     }
 
@@ -139,10 +164,9 @@ export function bindEvents(app, nav) {
       if (hasSupabaseConfig()) {
         try { const supabase = await getSupabaseClient(); await supabase.auth.signOut(); } catch { }
       }
-      const previousUsername = state.currentUser?.username || null;
       state.currentUser = null;
       state.token = null;
-      if (previousUsername !== state.currentUser?.username) syncStateForActiveUser();
+      syncStateForActiveUser();
       saveState();
       renderNav(nav);
       navigate('/');
@@ -157,7 +181,13 @@ export function bindEvents(app, nav) {
       e.preventDefault();
       const fd = new FormData(form);
       const q = String(fd.get('q') || '').trim();
+      hideDropdown();
       navigate(`/films/${encodeURIComponent(q)}`);
+    }
+
+    if (form.id === 'auth-form') {
+      e.preventDefault();
+      await handleAuthSubmit(form, nav);
     }
 
     if (form.id === 'movie-review-form') {
@@ -188,35 +218,10 @@ export function bindEvents(app, nav) {
         setReviewMessage(err.message, true);
       }
     }
-
-    if (form.id === 'auth-form') {
-      e.preventDefault();
-      const fd = new FormData(form);
-      const username = String(fd.get('username')).trim().toLowerCase();
-      const password = String(fd.get('password'));
-      const type = form.dataset.type;
-      const msg = document.getElementById('auth-message');
-
-      try {
-        if (type === 'signup') {
-          await apiFetch('/auth/signup', { method: 'POST', body: JSON.stringify({ username, password }) });
-        }
-        const payload = await apiFetch('/auth/signin', { method: 'POST', body: JSON.stringify({ username, password }) });
-        const previousUsername = state.currentUser?.username || null;
-        state.currentUser = payload.user;
-        state.token = payload.token;
-        if (previousUsername !== state.currentUser?.username) syncStateForActiveUser();
-        await hydrateWatchlistForSignedInUser();
-        saveState();
-        renderNav(nav);
-        navigate(`/profile/${encodeURIComponent(payload.user.username)}`);
-      } catch (err) {
-        if (msg) msg.textContent = err.message;
-      }
-    }
   });
 
   window.addEventListener('hashchange', () => {
+    hideDropdown();
     renderNav(nav);
     parseRoute(app);
     document.getElementById('main-content')?.focus();
