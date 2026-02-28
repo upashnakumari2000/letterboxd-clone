@@ -1,3 +1,11 @@
+const GENRE_MAP = {
+  28: 'Action', 12: 'Adventure', 16: 'Animation', 35: 'Comedy',
+  80: 'Crime', 99: 'Documentary', 18: 'Drama', 10751: 'Family',
+  14: 'Fantasy', 36: 'History', 27: 'Horror', 10402: 'Music',
+  9648: 'Mystery', 10749: 'Romance', 878: 'Sci-Fi', 10770: 'TV Movie',
+  53: 'Thriller', 10752: 'War', 37: 'Western',
+};
+
 export function normalizeTmdbFilm(movie) {
   const cast = Array.isArray(movie.credits?.cast)
     ? movie.credits.cast.slice(0, 8).map((person) => ({
@@ -49,13 +57,21 @@ export function normalizeTmdbFilm(movie) {
       return [...acc, { providerId: provider.provider_id, name: providerName }];
     }, []);
 
+  // Trending endpoint returns genre_ids (numbers), detail endpoint returns genres (objects)
+  let genres = [];
+  if (Array.isArray(movie.genres) && movie.genres.length) {
+    genres = movie.genres.map((g) => g.name);
+  } else if (Array.isArray(movie.genre_ids) && movie.genre_ids.length) {
+    genres = movie.genre_ids.map((id) => GENRE_MAP[id]).filter(Boolean);
+  }
+
   return {
     id: movie.id,
     title: movie.title,
     year: Number(String(movie.release_date || '').slice(0, 4)) || '—',
     director: directorNames.length ? directorNames.join(', ') : 'Unknown',
     runtime: movie.runtime || '—',
-    genres: (movie.genres || []).map((g) => g.name),
+    genres,
     avgRating: Number(movie.vote_average || 0) / 2,
     poster: movie.poster_path ? `https://image.tmdb.org/t/p/w342${movie.poster_path}` : movie.title,
     backdrop: movie.backdrop_path ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}` : '',

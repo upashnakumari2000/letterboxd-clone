@@ -2,36 +2,43 @@ import { escapeHtml } from '../utils/dom.js';
 
 export function filmPoster(film) {
   if (String(film.poster).startsWith('http')) {
-    return `<img class="poster-image" src="${escapeHtml(film.poster)}" alt="${escapeHtml(film.title)} poster" />`;
+    return `<img class="poster-image" src="${escapeHtml(film.poster)}" alt="${escapeHtml(film.title)} poster" loading="lazy" />`;
   }
-  const placeholderText =
-    String(film.poster || '').trim() && String(film.poster).trim() !== String(film.title).trim()
-      ? film.poster
-      : 'No poster available';
-  return `<div class="poster" role="img" aria-label="${escapeHtml(film.title)} poster placeholder">${escapeHtml(placeholderText)}</div>`;
+  return `<div class="poster" role="img" aria-label="${escapeHtml(film.title)} poster placeholder">${escapeHtml(film.title)}</div>`;
 }
 
 export function filmGrid(films) {
   if (!films.length) return '<p class="muted">No films found.</p>';
+
   return `<section class="grid" aria-label="Film grid">
-    ${films
-      .map(
-        (film) => `<article class="film-card">
-      <a href="#/film/${encodeURIComponent(film.id)}">
-        <div class="film-card-media">
-          ${filmPoster(film)}
-          <span class="film-card-overlay">Open details</span>
-        </div>
-        <div class="film-card-content">
-          <strong>${escapeHtml(film.title)}</strong>
-          <div class="film-card-meta">
-            <span class="meta-chip">⭐ ${escapeHtml(film.avgRating.toFixed(1))}</span>
-            <span class="meta-chip">${escapeHtml(film.year)}</span>
+    ${films.map((film) => {
+      const rating = Number(film.avgRating || 0).toFixed(1);
+      const year = film.year ? String(film.year) : '';
+      const director = film.director && film.director !== 'Unknown' ? film.director.split(',')[0].trim() : '';
+      const genres = Array.isArray(film.genres) ? film.genres.slice(0, 2) : [];
+
+      return `<article class="film-card">
+        <a href="#/film/${encodeURIComponent(film.id)}" aria-label="${escapeHtml(film.title)}">
+          <div class="film-card-media">
+            ${filmPoster(film)}
+            <!-- Rating badge always visible -->
+            <div class="film-card-rating-badge" aria-label="Rating ${rating}">
+              ★ ${escapeHtml(rating)}
+            </div>
+            <!-- Hover overlay with genres + year -->
+            <div class="film-card-overlay" aria-hidden="true">
+              ${year ? `<span class="film-card-overlay-year">${escapeHtml(year)}</span>` : ''}
+              ${genres.length ? `<div class="film-card-overlay-genres">
+                ${genres.map(g => `<span class="film-card-overlay-chip">${escapeHtml(g)}</span>`).join('')}
+              </div>` : ''}
+            </div>
           </div>
-        </div>
-      </a>
-    </article>`,
-      )
-      .join('')}
+          <div class="film-card-content">
+            <span class="film-card-title">${escapeHtml(film.title)}</span>
+            ${director ? `<span class="film-card-director">${escapeHtml(director)}</span>` : ''}
+          </div>
+        </a>
+      </article>`;
+    }).join('')}
   </section>`;
 }
